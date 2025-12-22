@@ -1,0 +1,5 @@
+{
+  "name": "IonViz: Microscopic Equilibrium",
+  "description": "A dynamic, interactive visualization of ionization equilibrium for strong and weak electrolytes, featuring real-time particle simulation, temperature/concentration controls, and chemical data.",
+  "requestFramePermissions": []
+}

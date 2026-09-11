@@ -338,6 +338,14 @@ electron-builder 会自动读取 `build/icon.ico`（Windows）与 `build/icon.pn
 
 ---
 
+## 📝 更新日志
+
+各版本的详细变更（新增 / 变更 / 修复 / 性能）见 [CHANGELOG.md](CHANGELOG.md)。
+
+当前版本 **v1.1.0** —— [下载 Windows 免安装便携版](https://github.com/xmmmymm/IonViz-Simulation/releases/latest)。
+
+---
+
 ## 📄 License
 
 本项目基于 [MIT License](LICENSE) 开源，可自由用于教学、修改与分发。

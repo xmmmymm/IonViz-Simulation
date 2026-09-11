@@ -1,0 +1,69 @@
+name: Release
+
+# 推送 v* 形式的 tag 时触发，例如：
+#   git tag v1.1.0 && git push origin v1.1.0
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要发布的 tag（需已存在，例如 v1.1.0）'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  # Windows 便携版单文件 exe：机房/学生机免安装，直接双击
+  windows-portable:
+    name: Windows portable exe
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web bundle
+        run: npm run build
+
+      # --publish never：本次只用 electron-builder 产出文件，
+      # 发布动作交给下面的 gh release create，避免两条发布链路互相打架
+      - name: Package portable exe
+        run: npx electron-builder --win portable --publish never
+
+      - name: List artifacts
+        run: Get-ChildItem dist_electron -Recurse -Include *.exe | Select-Object FullName, Length
+
+      - name: Publish GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "${{ inputs.tag || github.ref_name }}"
+          $exe = Get-ChildItem dist_electron -Filter "*portable*.exe" | Select-Object -First 1
+          if (-not $exe) { throw "未找到 portable exe 产物" }
+          Write-Host "发布 $tag → $($exe.Name) ($([math]::Round($exe.Length/1MB,1)) MB)"
+          gh release create $tag $exe.FullName `
+            --title "IonViz $tag" `
+            --generate-notes `
+            --target "${{ github.sha }}"
+
+      - name: Upload artifact (备份)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ionviz-windows-portable
+          path: dist_electron/*portable*.exe
+          retention-days: 30

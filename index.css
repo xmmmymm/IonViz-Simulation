@@ -1,4 +1,9 @@
 /* index.css - 基本样式 */
+/* Tailwind 本地编译入口（替代原来的 cdn.tailwindcss.com CDN 脚本） */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   margin: 0;
   padding: 0;
@@ -9,6 +14,8 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
+  /* 全局字号基准上调一档：16px → 17px，应用内所有 rem 字号同步变大 */
+  font-size: 17px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

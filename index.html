@@ -6,19 +6,9 @@
     <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IonViz: Microscopic Equilibrium</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  <script type="importmap">
-{
-  "imports": {
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "vite": "https://esm.sh/vite@^7.3.0",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
-  }
-}
-</script>
+    <!-- Tailwind 改为本地编译（index.css 的 @tailwind 指令 + tailwind.config.js）。
+         原先此处的 cdn.tailwindcss.com 与 esm.sh importmap 会使打包版离线时丢失全部样式，
+         且 importmap 引用的裸包名在 Vite 打包后已无任何消费者，故一并移除。 -->
 </head>
   <body class="bg-slate-50 text-slate-900">
     <div id="root"></div>

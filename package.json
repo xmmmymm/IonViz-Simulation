@@ -1,18 +1,51 @@
 {
-  "name": "ion-viz-app",
+  "name": "ionviz-simulation",
   "private": true,
-  "version": "1.0.0",
-  "description": "A dynamic, interactive visualization of ionization equilibrium",
-  "author": "IonViz Team",
+  "version": "1.1.0",
+  "description": "电离平衡微观模拟 — 高中化学强/弱电解质电离过程与动态平衡的粒子级可视化 (Interactive particle-level visualization of ionization equilibrium)",
+  "author": "xmmmymm",
+  "license": "MIT",
+  "homepage": "https://xmmmymm.github.io/IonViz-Simulation/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xmmmymm/IonViz-Simulation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xmmmymm/IonViz-Simulation/issues"
+  },
+  "keywords": [
+    "chemistry",
+    "education",
+    "ionization-equilibrium",
+    "weak-electrolyte",
+    "simulation",
+    "visualization",
+    "react",
+    "typescript",
+    "vite",
+    "electron",
+    "高中化学",
+    "电离平衡",
+    "弱电解质"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
     "start": "npm run electron:dev",
     "build": "tsc && vite build",
+    "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "electron": "wait-on tcp:5173 && electron .",
     "electron:dev": "concurrently -k \"cross-env BROWSER=none npm run dev\" \"npm run electron\"",
-    "electron:build": "npm run build && electron-builder"
+    "electron:build": "npm run build && electron-builder --publish never",
+    "electron:portable": "npm run build && electron-builder --win portable --publish never",
+    "screenshot": "npm run build && electron scripts/screenshot.js",
+    "verify:preview": "electron scripts/verify-preview.js",
+    "icon": "electron scripts/make-icon.js",
+    "clean": "node -e \"const fs=require('fs');['dist','dist_electron','docs/preview.png'].forEach(p=>fs.rmSync(p,{recursive:true,force:true}))\""
   },
   "dependencies": {
     "lucide-react": "^0.344.0",
@@ -37,21 +70,38 @@
   "build": {
     "appId": "com.ionviz.app",
     "productName": "IonViz Simulation",
+    "copyright": "Copyright © 2025-2026 xmmmymm",
     "directories": {
-      "output": "dist_electron"
+      "output": "dist_electron",
+      "buildResources": "build"
     },
     "files": [
       "dist/**/*",
       "electron/**/*"
     ],
+    "portable": {
+      "artifactName": "IonViz-Simulation-${version}-portable.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "IonViz-Simulation-Setup-${version}.${ext}",
+      "shortcutName": "电离平衡微观模拟"
+    },
     "mac": {
-      "category": "public.app-category.education"
+      "category": "public.app-category.education",
+      "target": "dmg"
     },
     "win": {
-      "target": "nsis"
+      "target": [
+        "nsis",
+        "portable"
+      ]
     },
     "linux": {
-      "target": "AppImage"
+      "target": "AppImage",
+      "category": "Education"
     }
   }
 }

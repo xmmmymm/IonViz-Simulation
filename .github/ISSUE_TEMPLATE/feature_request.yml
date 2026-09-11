@@ -1,0 +1,57 @@
+name: 💡 功能建议
+description: 提教学场景、模拟能力或界面上的改进想法
+title: '[Feature] '
+labels: ['enhancement', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        教学场景的建议尤其欢迎——请说明**它在课堂上解决什么问题**，
+        而不只是"想要某个功能"。
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 建议类型
+      options:
+        - 新增溶质 / 新增化学体系
+        - 模拟引擎能力（粒子行为、视觉效果）
+        - 教学数据与考点内容
+        - 界面与交互
+        - 打包 / 分发 / 部署
+        - 文档
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 你想解决的教学问题
+      description: 现在讲哪一部分时学生听不懂？现有功能为什么不够？
+      placeholder: 例如：讲"稀释促进电离"时，学生看不到 c(H⁺) 反而下降，因为面板只显示 α……
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 你设想的方案
+      placeholder: 例如：在数据面板同时显示 c(H⁺) 数值与变化方向的箭头
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 考虑过的替代方案
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: 你愿意帮忙实现吗？
+      options:
+        - label: 我愿意提交 PR
+        - label: 我可以提供化学/教学内容的校对
+        - label: 我只能提建议

@@ -1,0 +1,34 @@
+# 依赖更新由 Dependabot 每周开 PR，但**不自动合并**：
+# 教学项目优先稳定，升级需人工确认 UI/打包产物无回归。
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Asia/Shanghai
+    open-pull-requests-limit: 5
+    versioning-strategy: increase
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(dev-deps)'
+    groups:
+      # 同一批次的补丁/小版本合并成一个 PR，避免 PR 刷屏
+      minor-and-patch:
+        applies-to: version-updates
+        update-types: [minor, patch]
+    ignore:
+      # Electron 主版本升级需要同步验证打包链路，不自动开 PR
+      - dependency-name: electron
+        update-types: [version-update:semver-major]
+      - dependency-name: electron-builder
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: 'chore(ci)'

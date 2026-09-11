@@ -1,0 +1,102 @@
+name: 🐛 报告问题
+description: 页面/模拟/打包出现异常时提交
+title: '[Bug] '
+labels: ['bug', 'needs-triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！请尽量填全下面的信息——尤其是**复现步骤**和**运行方式**，
+        这决定了问题出在网页端、Electron 端还是打包产物里。
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已阅读 README，并用最新代码 + `npm install` 重试过
+          required: true
+        - label: 我已搜索过现有 Issue，没有重复
+          required: true
+
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: 运行方式
+      description: 你是在哪里遇到问题的？
+      options:
+        - 网页开发模式（npm run dev）
+        - 生产构建预览（npm run build && npm run preview）
+        - Electron 开发模式（npm start）
+        - 打包后的桌面端（Release 里的 portable exe / 安装包）
+        - GitHub Pages 线上版
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 版本 / 提交号
+      description: Release 版本号，或 `git rev-parse --short HEAD` 的输出
+      placeholder: 例如 v1.0.0 或 011e297
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 请按顺序写清每一步操作（选了哪种溶质、滑块拖到多少等）
+      placeholder: |
+        1. 打开页面，选择 CH₃COOH
+        2. 温度拖到 80°C
+        3. 浓度拖到 0.2M
+        4. 出现……
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果 / 实际结果
+      placeholder: |
+        期望：电离度 α 应随温度升高而增大
+        实际：α 显示不变
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: 涉及模块（可多选）
+      multiple: true
+      options:
+        - 粒子模拟画布 SimulationCanvas
+        - 控制面板 / 滑块 ControlPanel
+        - 数据计算（Ka / α / pH / 导电亮度）
+        - 电离方程式显示
+        - 界面样式 / 布局
+        - Electron 桌面端
+        - 构建 / 打包 / CI
+        - 不确定
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 截图 / 录屏 / 控制台报错
+      description: 直接拖拽图片到输入框即可；控制台报错请贴完整堆栈
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 环境信息
+      value: |
+        - 操作系统：
+        - 浏览器 / Electron 版本：
+        - Node.js 版本（`node -v`）：
+      render: markdown
+    validations:
+      required: true

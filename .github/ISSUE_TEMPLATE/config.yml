@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 先读 README
+    url: https://github.com/xmmmymm/IonViz-Simulation#-快速开始
+    about: 安装、运行、打包的说明都在这里，多数问题可自助解决。
+  - name: 💬 讨论教学用法
+    url: https://github.com/xmmmymm/IonViz-Simulation/discussions
+    about: 课堂用法、模型误差、新增溶质等开放话题，欢迎在这里聊。

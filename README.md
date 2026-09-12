@@ -110,6 +110,7 @@ npm start            # = npm run electron:dev
 | `npm run typecheck` | 只做 TypeScript 类型检查，不产出文件 |
 | `npm run screenshot` | 构建 + 等平衡 + 截取 README 预览图 → `docs/preview.png` |
 | `npm run verify:preview` | 自检预览图/图标非空白，且页面确实进入电离平衡 |
+| `npm run verify:package` | 自检打包产物：asar 精简、文件齐全、且真的能渲染出页面 |
 | `npm run icon` | 生成应用图标 → `build/icon.png` + 多尺寸 `build/icon.ico` |
 | `npm run electron:build` | 打包 Windows 安装包 + 便携版 + zip 三种产物 |
 | `npm run electron:portable` | 只打包 Windows **免安装便携版**单文件 exe |
@@ -262,6 +263,7 @@ IonViz-Simulation/
 ├── scripts/
 │   ├── screenshot.js           # 等电离平衡建立后用 Electron 截取 README 预览图
 │   ├── verify-preview.js       # 预览图 / 运行态 / 图标 三层自检
+│   ├── verify-package.js       # 打包产物自检：asar 精简、文件齐全、真能渲染
 │   └── make-icon.js            # 生成应用图标（png + 多尺寸 ico）
 ├── docs/
 │   └── preview.png             # README 预览图（自动生成）
@@ -284,6 +286,9 @@ IonViz-Simulation/
 - **Tailwind 本地编译**：早期版本用 `cdn.tailwindcss.com`，打包后离线打开会丢掉**全部样式**（页面退化成纯文本）。现已改为 `postcss + tailwindcss` 本地构建。
 - **Canvas 性能**：粒子引擎直接操作 Canvas API 与 `requestAnimationFrame`，统计结果**每 400 ms** 才回传一次 React，避免 60 fps 触发重渲染。
 - **`contextIsolation: false`**：桌面端为简化本地资源加载而关闭，仅用于离线教学场景，**不加载任何远程内容**，故不接受远程代码。
+- **`dependencies` 故意为空**：渲染进程的 `react` / `react-dom` / `lucide-react` 全部由 Vite 打进 `dist/assets/*.js`，主进程只 `require('electron')` 与 `'path'`——**打包后的应用在运行时不需要任何 `node_modules`**。因此这三个包放在 `devDependencies`。
+  若把它们放回 `dependencies`，electron-builder 会把整棵生产依赖树复制进 `app.asar`：实测 asar 从 **0.19 MB 膨胀到 23.8 MB**（安装包多约 2 MB）。
+  ⚠️ 新增依赖前请先确认打包后的应用是否真的在运行时需要它；`npm run verify:package` 会守住这条线。
 
 ---
 

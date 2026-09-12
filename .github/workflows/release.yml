@@ -55,6 +55,11 @@ jobs:
             Select-Object Name, @{ n = 'MB'; e = { [math]::Round($_.Length / 1MB, 1) } } |
             Format-Table -AutoSize | Out-String | Write-Host
 
+      # 发布前先证明打出来的包真的能跑：直接以 file:// 加载 asar 内的 dist/index.html，
+      # 确认 React 挂载、粒子模拟能进入电离平衡。避免把一个白屏的安装包发给学生。
+      - name: Verify packaged app
+        run: npm run verify:package
+
       - name: Publish GitHub Release
         shell: pwsh
         env:

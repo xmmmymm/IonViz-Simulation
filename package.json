@@ -44,14 +44,12 @@
     "electron:portable": "npm run build && electron-builder --win portable --publish never",
     "screenshot": "npm run build && electron scripts/screenshot.js",
     "verify:preview": "electron scripts/verify-preview.js",
+    "verify:package": "electron scripts/verify-package.js",
     "icon": "electron scripts/make-icon.js",
     "clean": "node -e \"const fs=require('fs');['dist','dist_electron','docs/preview.png'].forEach(p=>fs.rmSync(p,{recursive:true,force:true}))\""
   },
-  "dependencies": {
-    "lucide-react": "^0.344.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
+  "//dependencies": "运行时依赖为空是刻意为之：渲染进程的 react / react-dom / lucide-react 全部由 Vite 打进 dist/assets/*.js，主进程只 require('electron') 与 'path'。若把它们放回 dependencies，electron-builder 会把整棵生产依赖树复制进 app.asar（实测多出 23 MB 冗余）。新增依赖前请先确认打包后的应用是否真的在运行时需要它。",
+  "dependencies": {},
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -61,7 +59,10 @@
     "cross-env": "^7.0.3",
     "electron": "^31.0.0",
     "electron-builder": "^24.13.3",
+    "lucide-react": "^0.344.0",
     "postcss": "^8.4.38",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.3",
     "vite": "^5.3.1",

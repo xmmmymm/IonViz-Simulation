@@ -50,6 +50,14 @@
 
 ### 性能
 
+- **打包体积优化**：`react` / `react-dom` / `lucide-react` 由 `dependencies` 移入
+  `devDependencies`。三者已由 Vite 全部打进 `dist/assets/*.js`，主进程只依赖
+  `electron` 与 `path`，**打包后的应用在运行时不需要任何 `node_modules`**；
+  此前 electron-builder 会把整棵生产依赖树复制进 `app.asar`，
+  使 asar 从 **0.19 MB 膨胀到 23.8 MB**（三种安装产物各多约 2 MB）
+- 新增 `npm run verify:package`：直接以 `file://` 加载 asar 内的 `dist/index.html`，
+  确认 React 挂载、粒子模拟进入电离平衡，共 13 项断言；
+  并接入 Release 工作流，发布前先验证，避免把白屏的安装包发给学生
 - 画布 backing store 精确等于容器 CSS 尺寸 × devicePixelRatio（上限 1.5），
   不再把 800×500 缓冲放大到全屏，省掉每帧一次全屏重采样
 - 离子复合判定由 O(n²) 全量双循环 + `Array.includes` 线性查找，

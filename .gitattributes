@@ -30,5 +30,6 @@
 *.dll   binary
 *.zip   binary
 
-# 锁文件在 diff 与语言统计中折叠，避免刷屏
-package-lock.json  -diff linguist-generated
+# 锁文件在 PR 文件列表与语言统计中折叠，但仍保留可读 diff
+# （不用 -diff：那会把 lock 当二进制，依赖变动将无法在 review 中查看）
+package-lock.json  linguist-generated=true -linguist-detectable

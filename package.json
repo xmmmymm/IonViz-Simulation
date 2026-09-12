@@ -51,7 +51,7 @@
   "//dependencies": "运行时依赖为空是刻意为之：渲染进程的 react / react-dom / lucide-react 全部由 Vite 打进 dist/assets/*.js，主进程只 require('electron') 与 'path'。若把它们放回 dependencies，electron-builder 会把整棵生产依赖树复制进 app.asar（实测多出 23 MB 冗余）。新增依赖前请先确认打包后的应用是否真的在运行时需要它。",
   "dependencies": {},
   "devDependencies": {
-    "@types/react": "^18.3.3",
+    "@types/react": "^19.2.18",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
@@ -61,7 +61,7 @@
     "electron-builder": "^24.13.3",
     "lucide-react": "^0.344.0",
     "postcss": "^8.4.38",
-    "react": "^18.3.1",
+    "react": "^19.2.8",
     "react-dom": "^18.3.1",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.3",

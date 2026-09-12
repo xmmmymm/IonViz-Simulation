@@ -1,7 +1,7 @@
 name: Release
 
 # 推送 v* 形式的 tag 时触发，例如：
-#   git tag v1.1.0 && git push origin v1.1.0
+#   git tag v1.1.1 && git push origin v1.1.1
 on:
   push:
     tags:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: '要发布的 tag（需已存在，例如 v1.1.0）'
+        description: '要发布的 tag（需已存在，例如 v1.1.1）'
         required: true
         type: string
 
@@ -17,9 +17,12 @@ permissions:
   contents: write
 
 jobs:
-  # Windows 便携版单文件 exe：机房/学生机免安装，直接双击
-  windows-portable:
-    name: Windows portable exe
+  # 一次构建产出三种 Windows 分发形态（定义见 package.json → build.win.target）：
+  #   nsis     安装包，可自选安装目录，写入开始菜单快捷方式
+  #   portable 免安装单文件 exe，双击即用
+  #   zip      win-unpacked 整包压缩，适合不允许运行安装程序的机房
+  windows:
+    name: Windows 安装包 / 便携版 / zip
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -41,11 +44,16 @@ jobs:
 
       # --publish never：本次只用 electron-builder 产出文件，
       # 发布动作交给下面的 gh release create，避免两条发布链路互相打架
-      - name: Package portable exe
-        run: npx electron-builder --win portable --publish never
+      - name: Package (nsis + portable + zip)
+        run: npx electron-builder --win --publish never
 
       - name: List artifacts
-        run: Get-ChildItem dist_electron -Recurse -Include *.exe | Select-Object FullName, Length
+        shell: pwsh
+        run: |
+          Get-ChildItem dist_electron -File |
+            Where-Object { $_.Extension -in '.exe', '.zip' } |
+            Select-Object Name, @{ n = 'MB'; e = { [math]::Round($_.Length / 1MB, 1) } } |
+            Format-Table -AutoSize | Out-String | Write-Host
 
       - name: Publish GitHub Release
         shell: pwsh
@@ -53,17 +61,36 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $tag = "${{ inputs.tag || github.ref_name }}"
-          $exe = Get-ChildItem dist_electron -Filter "*portable*.exe" | Select-Object -First 1
-          if (-not $exe) { throw "未找到 portable exe 产物" }
-          Write-Host "发布 $tag → $($exe.Name) ($([math]::Round($exe.Length/1MB,1)) MB)"
-          gh release create $tag $exe.FullName `
+
+          # 三种产物都要挂上去，缺任何一种就报错，避免发出一个残缺的 Release
+          # 按修改时间倒序取最新一个，避免 dist_electron 里残留旧版本的产物被误发
+          function Newest($pattern) {
+            Get-ChildItem dist_electron -Filter $pattern |
+              Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          }
+          $setup    = Newest "IonViz-Simulation-Setup-*.exe"
+          $portable = Newest "IonViz-Simulation-*-portable.exe"
+          $zip      = Newest "IonViz-Simulation-*-win-*.zip"
+
+          $missing = @()
+          if (-not $setup)    { $missing += 'Setup exe' }
+          if (-not $portable) { $missing += 'portable exe' }
+          if (-not $zip)      { $missing += 'zip' }
+          if ($missing.Count -gt 0) { throw "缺少产物: $($missing -join ', ')" }
+
+          $files = @($setup.FullName, $portable.FullName, $zip.FullName)
+          $files | ForEach-Object { Write-Host "  → $(Split-Path $_ -Leaf) ($([math]::Round((Get-Item $_).Length / 1MB, 1)) MB)" }
+
+          gh release create $tag @files `
             --title "IonViz $tag" `
             --generate-notes `
             --target "${{ github.sha }}"
 
-      - name: Upload artifact (备份)
+      - name: Upload artifacts (备份)
         uses: actions/upload-artifact@v7
         with:
-          name: ionviz-windows-portable
-          path: dist_electron/*portable*.exe
+          name: ionviz-windows
+          path: |
+            dist_electron/*.exe
+            dist_electron/*.zip
           retention-days: 30

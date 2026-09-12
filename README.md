@@ -111,8 +111,8 @@ npm start            # = npm run electron:dev
 | `npm run screenshot` | 构建 + 等平衡 + 截取 README 预览图 → `docs/preview.png` |
 | `npm run verify:preview` | 自检预览图/图标非空白，且页面确实进入电离平衡 |
 | `npm run icon` | 生成应用图标 → `build/icon.png` + 多尺寸 `build/icon.ico` |
-| `npm run electron:build` | 打包桌面端（Windows NSIS / macOS dmg / Linux AppImage） |
-| `npm run electron:portable` | 打包 Windows **免安装便携版**单文件 exe |
+| `npm run electron:build` | 打包 Windows 安装包 + 便携版 + zip 三种产物 |
+| `npm run electron:portable` | 只打包 Windows **免安装便携版**单文件 exe |
 | `npm run clean` | 清理 `dist/`、`dist_electron/`、`docs/preview.png` |
 
 ---
@@ -120,22 +120,41 @@ npm start            # = npm run electron:dev
 ## 📦 打包桌面端
 
 ```bash
-npm run electron:portable   # → dist_electron/IonViz-Simulation-<version>-portable.exe
+npm run electron:build      # 一次产出 Windows 安装包 + 便携版 + zip
+npm run electron:portable   # 只产免安装单文件 exe
 ```
 
-产物为**单文件免安装 exe**，双击即用，适合拷进机房电脑或发给学生。
+Windows 三种分发形态由 [`package.json`](package.json) 的 `build.win.target` 定义：
 
-正式安装包（NSIS）与跨平台产物：
+| target | 产物 | 适合场景 |
+|---|---|---|
+| `nsis` | `IonViz-Simulation-Setup-<version>.exe` | 安装包：可自选安装目录，自动建开始菜单/桌面快捷方式 |
+| `portable` | `IonViz-Simulation-<version>-portable.exe` | 免安装**单文件**，拷到哪都能双击运行，不留痕迹 |
+| `zip` | `IonViz-Simulation-<version>-win-x64.zip` | 解压即用的完整目录，适合不允许运行安装程序的机房 |
+
+跨平台产物（macOS / Linux，需在对应系统上打包）：
 
 ```bash
-npm run electron:build      # Windows nsis / macOS dmg / Linux AppImage
+npx electron-builder --mac     # → dmg
+npx electron-builder --linux   # → AppImage
 ```
 
-> 打 tag 推送后，GitHub Actions 会自动构建便携版并挂到 Release 上，无需本地打包。
+> 推送 `v*` tag 后，[Release 工作流](.github/workflows/release.yml) 会自动构建以上三种
+> Windows 产物并挂到 Release 上，无需本地打包；缺少任何一种会直接报错，避免发出残缺的 Release。
 
 ### 下载现成版本
 
-前往 [**Releases**](https://github.com/xmmmymm/IonViz-Simulation/releases) 下载最新的便携版 exe，解压/双击即可运行，无需安装 Node.js。
+前往 [**Releases**](https://github.com/xmmmymm/IonViz-Simulation/releases/latest) 下载：
+
+| 文件 | 适合谁 |
+|---|---|
+| `IonViz-Simulation-Setup-<version>.exe` | **大多数人** —— 双击安装，之后从开始菜单启动 |
+| `IonViz-Simulation-<version>-portable.exe` | 机房 / U 盘 —— 免安装单文件，双击即用 |
+| `IonViz-Simulation-<version>-win-x64.zip` | 不允许运行安装程序的机器 —— 解压后运行 `IonViz Simulation.exe` |
+
+**三种都无需安装 Node.js、无需联网。** 首次运行若被 SmartScreen 拦截，点「更多信息」→「仍要运行」即可（未做代码签名）。
+
+**或者直接用网页版**：<https://xmmmymm.github.io/IonViz-Simulation/>（功能完全相同，无需下载）
 
 ---
 
@@ -342,7 +361,7 @@ electron-builder 会自动读取 `build/icon.ico`（Windows）与 `build/icon.pn
 
 各版本的详细变更（新增 / 变更 / 修复 / 性能）见 [CHANGELOG.md](CHANGELOG.md)。
 
-当前版本 **v1.1.0** —— [下载 Windows 免安装便携版](https://github.com/xmmmymm/IonViz-Simulation/releases/latest)。
+当前版本 **v1.1.0** —— [下载 Windows 安装包 / 便携版 / zip](https://github.com/xmmmymm/IonViz-Simulation/releases/latest)。
 
 ---
 

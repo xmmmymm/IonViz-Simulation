@@ -20,6 +20,8 @@
 - 自检脚本 `scripts/verify-preview.js`：图像层 / 运行层 / 图标层共 23 项断言
 - 新增 npm 脚本：`typecheck`、`screenshot`、`verify:preview`、`icon`、`clean`、
   `electron:portable`（免安装单文件 exe）
+- Windows 三种分发形态：`nsis` 安装包、`portable` 免安装单文件、
+  `zip` 解压即用整包（适合不允许运行安装程序的机房）
 - GitHub Actions 工作流：CI（Node 18/20 类型检查 + 构建）、Release（打 tag 自动打包发布）、
   Pages（构建静态站点并部署）
 - 仓库模板：Issue 表单（Bug / 功能建议）、PR 模板、Dependabot、`.editorconfig`、`.gitattributes`

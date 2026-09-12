@@ -96,8 +96,10 @@
     "win": {
       "target": [
         "nsis",
-        "portable"
-      ]
+        "portable",
+        "zip"
+      ],
+      "artifactName": "IonViz-Simulation-${version}-win-${arch}.${ext}"
     },
     "linux": {
       "target": "AppImage",

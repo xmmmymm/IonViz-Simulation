@@ -59,7 +59,7 @@
     "cross-env": "^7.0.3",
     "electron": "^31.0.0",
     "electron-builder": "^24.13.3",
-    "lucide-react": "^0.344.0",
+    "lucide-react": "^1.43.0",
     "postcss": "^8.4.38",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
